@@ -453,7 +453,7 @@ void CardReader::manage_media() {
     prev_stat = stat;                 // Change now to prevent re-entry
 
     if (stat) {                       // Media Inserted
-      safe_delay(500);                // Some boards need a delay to get settled
+      safe_delay(750);                // Some boards need a delay to get settled
       if (TERN1(SD_IGNORE_AT_STARTUP, old_stat != 2))
         mount();                      // Try to mount the media
       #if MB(FYSETC_CHEETAH, FYSETC_CHEETAH_V12, FYSETC_AIO_II)
