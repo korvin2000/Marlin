@@ -42,6 +42,7 @@
 // Servos
 //
 #define SERVO0_PIN                          PA1   // SERVOS
+#define PS_ON_PIN                           PC2
 
 //
 // Limit Switches
@@ -58,8 +59,12 @@
 //
 // Filament Runout Sensor
 //
+#ifdef FIL_RUNOUT_PIN
+  #undef FIL_RUNOUT_PIN   PC2
+#endif
+
 #ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN                    PC2   // E0-STOP
+  //#define FIL_RUNOUT_PIN   PC2
 #endif
 
 //
