@@ -2592,8 +2592,8 @@
   #define INTERPOLATE      true
 
   #if AXIS_IS_TMC(X)
-    #define X_CURRENT       525        // (mA) RMS current. Multiply by 1.414 for peak current.
-    #define X_CURRENT_HOME  X_CURRENT  // (mA) RMS current for sensorless homing
+    #define X_CURRENT        525        // (mA) RMS current. Multiply by 1.414 for peak current.
+    #define X_CURRENT_HOME   X_CURRENT  // (mA) RMS current for sensorless homing
     #define X_MICROSTEPS     32        // 0..256
     #define X_RSENSE         0.075
     #define X_CHAIN_POS      0        // -1..0: Not chained. 1: MCU MOSI connected. 2: Next in chain, ...
@@ -2601,38 +2601,38 @@
   #endif
 
   #if AXIS_IS_TMC(X2)
-    #define X2_CURRENT      800
-    #define X2_CURRENT_HOME X2_CURRENT
+    #define X2_CURRENT       800
+    #define X2_CURRENT_HOME  X2_CURRENT
     #define X2_MICROSTEPS    X_MICROSTEPS
-    #define X2_RSENSE         0.075
+    #define X2_RSENSE        0.075
     #define X2_CHAIN_POS     0
     //#define X2_INTERPOLATE true
   #endif
 
   #if AXIS_IS_TMC(Y)
-    #define Y_CURRENT       680
-    #define Y_CURRENT_HOME  Y_CURRENT
+    #define Y_CURRENT        680
+    #define Y_CURRENT_HOME   Y_CURRENT
     #define Y_MICROSTEPS     32
-    #define Y_RSENSE          0.075
+    #define Y_RSENSE         0.075
     #define Y_CHAIN_POS      0
     //#define Y_INTERPOLATE  true
   #endif
 
   #if AXIS_IS_TMC(Y2)
-    #define Y2_CURRENT      800
-    #define Y2_CURRENT_HOME Y2_CURRENT
+    #define Y2_CURRENT       800
+    #define Y2_CURRENT_HOME  Y2_CURRENT
     #define Y2_MICROSTEPS    Y_MICROSTEPS
-    #define Y2_RSENSE         0.075
+    #define Y2_RSENSE        0.075
     #define Y2_CHAIN_POS     0
     //#define Y2_INTERPOLATE true
   #endif
 
   #if AXIS_IS_TMC(Z)
-    #define Z_CURRENT       520
-    #define Z_CURRENT_HOME  Z_CURRENT
-    #define Z_MICROSTEPS     32
+    #define Z_CURRENT         520
+    #define Z_CURRENT_HOME    Z_CURRENT
+    #define Z_MICROSTEPS      32
     #define Z_RSENSE          0.075
-    #define Z_CHAIN_POS      0
+    #define Z_CHAIN_POS       0
     //#define Z_INTERPOLATE  true
   #endif
 
