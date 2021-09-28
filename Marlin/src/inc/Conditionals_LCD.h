@@ -237,16 +237,16 @@
 #elif ENABLED(CR10_STOCKDISPLAY)
 
   #define IS_RRD_FG_SC 1
-  #define LCD_ST7920_DELAY_1 DELAY_NS(125)
-  #define LCD_ST7920_DELAY_2 DELAY_NS(125)
-  #define LCD_ST7920_DELAY_3 DELAY_NS(125)
+  #define LCD_ST7920_DELAY_1           125
+  #define LCD_ST7920_DELAY_2           125
+  #define LCD_ST7920_DELAY_3           125
 
-#elif ENABLED(ANET_FULL_GRAPHICS_LCD, ANET_FULL_GRAPHICS_LCD_ALT_WIRING)
+#elif EITHER(ANET_FULL_GRAPHICS_LCD, ANET_FULL_GRAPHICS_LCD_ALT_WIRING)
 
   #define IS_RRD_FG_SC 1
-  #define LCD_ST7920_DELAY_1 DELAY_NS(150)
-  #define LCD_ST7920_DELAY_2 DELAY_NS(150)
-  #define LCD_ST7920_DELAY_3 DELAY_NS(150)
+  #define LCD_ST7920_DELAY_1           150
+  #define LCD_ST7920_DELAY_2           150
+  #define LCD_ST7920_DELAY_3           150
 
 #elif ANY(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER, BQ_LCD_SMART_CONTROLLER, K3D_FULL_GRAPHIC_SMART_CONTROLLER)
 
@@ -478,7 +478,11 @@
 #endif
 
 // Aliases for LCD features
-#if ANY(DGUS_LCD_UI_ORIGIN, DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_HIPRECY,DGUS_LCD_UI_MKS)
+#if ANY(DGUS_LCD_UI_ORIGIN, DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_HIPRECY, DGUS_LCD_UI_MKS)
+  #define HAS_DGUS_LCD_CLASSIC 1
+#endif
+
+#if ANY(HAS_DGUS_LCD_CLASSIC, DGUS_LCD_UI_RELOADED)
   #define HAS_DGUS_LCD 1
 #endif
 
@@ -489,6 +493,27 @@
 #endif
 
 // Aliases for LCD features
+#if EITHER(DWIN_CREALITY_LCD, DWIN_CREALITY_LCD_ENHANCED)
+  #define HAS_DWIN_E3V2_BASIC 1
+#endif
+#if EITHER(HAS_DWIN_E3V2_BASIC, DWIN_CREALITY_LCD_JYERSUI)
+  #define HAS_DWIN_E3V2 1
+#endif
+
+// E3V2 extras
+#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
+  #define SERIAL_CATCHALL 0
+  #ifndef LCD_SERIAL_PORT
+    #if MB(BTT_SKR_MINI_E3_V1_0, BTT_SKR_MINI_E3_V1_2, BTT_SKR_MINI_E3_V2_0, BTT_SKR_E3_TURBO)
+      #define LCD_SERIAL_PORT 1
+    #else
+      #define LCD_SERIAL_PORT 3 // Creality 4.x board
+    #endif
+  #endif
+  #define HAS_LCD_BRIGHTNESS 1
+  #define LCD_BRIGHTNESS_MAX 250
+#endif
+
 #if IS_ULTRA_LCD
   #define HAS_WIRED_LCD 1
   #if ENABLED(DOGLCD)
@@ -503,11 +528,11 @@
   #endif
 #endif
 
-#if EITHER(HAS_WIRED_LCD, EXTENSIBLE_UI)
+#if ANY(HAS_WIRED_LCD, EXTENSIBLE_UI, DWIN_CREALITY_LCD_JYERSUI)
   #define HAS_DISPLAY 1
 #endif
 
-#if ANY(HAS_DISPLAY, DWIN_CREALITY_LCD, GLOBAL_STATUS_MESSAGE)
+#if ANY(HAS_DISPLAY, HAS_DWIN_E3V2, GLOBAL_STATUS_MESSAGE)
   #define HAS_STATUS_MESSAGE 1
 #endif
 
@@ -562,6 +587,8 @@
  *  HOTENDS      - Number of hotends, whether connected or separate
  *  E_STEPPERS   - Number of actual E stepper motors
  *  E_MANUAL     - Number of E steppers for LCD move options
+ *
+ * These defines must be simple constants for use in REPEAT, etc.
  */
 #if EXTRUDERS
   #define HAS_EXTRUDERS 1
@@ -580,9 +607,14 @@
   #undef DISABLE_E
 #endif
 
+#define E_OPTARG(N) OPTARG(HAS_MULTI_EXTRUDER, N)
+#define E_TERN_(N)  TERN_(HAS_MULTI_EXTRUDER, N)
+#define E_TERN0(N)  TERN0(HAS_MULTI_EXTRUDER, N)
+
 #if ENABLED(E_DUAL_STEPPER_DRIVERS) // E0/E1 steppers act in tandem as E0
 
   #define E_STEPPERS      2
+  #define E_MANUAL        1
 
 #elif ENABLED(SWITCHING_EXTRUDER)   // One stepper for every two EXTRUDERS
 
@@ -612,7 +644,8 @@
 
 #elif HAS_PRUSA_MMU2                // Průša Multi-Material Unit v2
 
-  #define E_STEPPERS 1
+  #define E_STEPPERS      1
+  #define E_MANUAL        1
 
 #endif
 
@@ -920,7 +953,10 @@
   #if DISABLED(NOZZLE_AS_PROBE)
     #define HAS_PROBE_XY_OFFSET 1
   #endif
-  #if DISABLED(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN) && !BOTH(DELTA, SENSORLESS_PROBING)
+  #if BOTH(DELTA, SENSORLESS_PROBING)
+    #define HAS_DELTA_SENSORLESS_PROBING 1
+  #endif
+  #if NONE(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN, HAS_DELTA_SENSORLESS_PROBING)
     #define USES_Z_MIN_PROBE_PIN 1
   #endif
   #if Z_HOME_TO_MIN && TERN1(USES_Z_MIN_PROBE_PIN, ENABLED(USE_PROBE_FOR_Z_HOMING))
@@ -1047,7 +1083,7 @@
 #if ANY(MORGAN_SCARA, MP_SCARA, AXEL_TPARA)
   #define IS_SCARA 1
   #define IS_KINEMATIC 1
-#elif ENABLED(DELTA)
+#elif EITHER(DELTA, POLARGRAPH)
   #define IS_KINEMATIC 1
 #else
   #define IS_CARTESIAN 1
@@ -1095,17 +1131,6 @@
 #endif
 #if SERIAL_PORT_2 == -2
   #define HAS_ETHERNET 1
-#endif
-
-#if EITHER(DWIN_CREALITY_LCD, IS_DWIN_MARLINUI)
-  #define SERIAL_CATCHALL 0
-  #ifndef LCD_SERIAL_PORT
-    #if MB(BTT_SKR_MINI_E3_V1_0, BTT_SKR_MINI_E3_V1_2, BTT_SKR_MINI_E3_V2_0, BTT_SKR_E3_TURBO)
-      #define LCD_SERIAL_PORT 1
-    #else
-      #define LCD_SERIAL_PORT 3 // Creality 4.x board
-    #endif
-  #endif
 #endif
 
 // Fallback Stepper Driver types that don't depend on Configuration_adv.h
@@ -1346,6 +1371,9 @@
 
 // This emulated DOGM has 'touch/xpt2046', not 'tft/xpt2046'
 #if ENABLED(TOUCH_SCREEN)
+  #if TOUCH_IDLE_SLEEP
+    #define HAS_TOUCH_SLEEP 1
+  #endif
   #if NONE(TFT_TOUCH_DEVICE_GT911, TFT_TOUCH_DEVICE_XPT2046)
     #define TFT_TOUCH_DEVICE_XPT2046          // ADS7843/XPT2046 ADC Touchscreen such as ILI9341 2.8
   #endif
