@@ -1531,7 +1531,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
   #if ENABLED(BLTOUCH)
 
     // BLTouch can't run in 5V mode with a 3.3V probe pin
-    #if ENABLED(BLTOUCH_SET_5V_MODE)
+    /*#if ENABLED(BLTOUCH_SET_5V_MODE)
       #define _5V(P,A,B) WITHIN(P,A,B)
       #ifdef STM32F1            // STM32F103 5V-tolerant pins
         #define _IS_5V_TOLERANT(P) (_5V(P,PA8,PA15) || _5V(P,PB2,PB15) || _5V(P,PC6,PC12) || _5V(P,PD0,PD15) || _5V(P,PE0,PE15) || _5V(P,PF0,PF5) || _5V(P,PF11,PF15))
@@ -1553,7 +1553,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
       #else
         #error "BLTOUCH on Z_MIN_PIN requires ENDSTOPPULLUP_ZMIN, ENDSTOPPULLUPS, or BLTOUCH_SET_5V_MODE."
       #endif
-    #endif
+    #endif*/
 
     #if BLTOUCH_DELAY < 200
       #error "BLTOUCH_DELAY less than 200 is unsafe and is not supported."
